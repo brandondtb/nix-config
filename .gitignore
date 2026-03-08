@@ -1,0 +1,5 @@
+.stignore
+.stfolder/
+.idea/
+result
+.aider*

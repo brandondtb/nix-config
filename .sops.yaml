@@ -1,0 +1,9 @@
+keys:
+  - &admin age18evrtkw2u8aepymjed5wtxmddmajh7ltcpq4kk7wwrf4u6qtnv2surywn6
+  - &dreadnought age1kv92a5l2xckkd7s89z75dd3096rtea3gddsfk9x6cwgdq6fuhcts37nyyt
+creation_rules:
+  - path_regex: secrets/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *dreadnought
