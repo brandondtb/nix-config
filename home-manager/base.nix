@@ -301,7 +301,7 @@
       # Override prompt on servers with a red hostname to prevent prod accidents
       case "$(hostname)" in
         zoneseek)
-          PROMPT="%F{red}%B[PROD]%b %F{red}%m%f %F{blue}%~%f %F{red}❯%f "
+          PROMPT="%F{red}%B[%m]%b%f %F{blue}%~%f %F{red}❯%f "
           ;;
       esac
     '';
