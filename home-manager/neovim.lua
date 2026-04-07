@@ -144,7 +144,7 @@ require("obsidian").setup({
 	workspaces = {
 		{
 			name = "obsidian",
-			path = "~/Sync/Obsidian",
+			path = "~/Obsidian",
 		},
 	},
 	daily_notes = {

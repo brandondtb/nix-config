@@ -34,45 +34,27 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
-  networking.networkmanager = {
-    enable = true;
-    # NM pushes DHCP DNS to resolved as per-link DNS regardless of dns/systemd-resolved
-    # settings (NM 1.56 bug). Clear it after each connection comes up.
-    dispatcherScripts = [
-      {
-        source = pkgs.writeText "clear-link-dns" ''
-          if [ "$2" = "up" ] && [ "$1" != "tailscale0" ]; then
-            ${pkgs.systemd}/bin/resolvectl dns "$1" ""
-            ${pkgs.systemd}/bin/resolvectl default-route "$1" false
-          fi
-        '';
-        type = "basic";
-      }
-    ];
-  };
+  networking.useNetworkd = true;
+  networking.wireless.iwd.enable = true;
 
-  # TODO: Re-enable NextDNS once ISP routing issues resolve
-  # services.nextdns = {
-  #   enable = true;
-  #   arguments = [
-  #     "-profile" "7d61b4"
-  #     "-listen" "127.0.0.2:53"
-  #     "-cache-size" "10MB"
-  #   ];
-  # };
-
-  networking.nameservers = [
-    "1.1.1.1#cloudflare-dns.com"
-    "1.0.0.1#cloudflare-dns.com"
-  ];
-
-  services.resolved = {
-    enable = true;
-    settings.Resolve = {
-      DNSOverTLS = "yes";
-      Domains = [ "~." ];
+  systemd.network.networks."40-wired" = {
+    matchConfig = {
+      Type = "ether";
+      Name = "!virbr* veth* docker* br-*";
     };
+    networkConfig.DHCP = "yes";
+    dhcpV4Config.RouteMetric = 100;
   };
+  systemd.network.networks."40-wireless" = {
+    matchConfig.Type = "wlan";
+    networkConfig.DHCP = "yes";
+    dhcpV4Config.RouteMetric = 600;
+  };
+
+  # NextDNS is pushed via Tailscale's --accept-dns (tailnet DNS config).
+  # If ISP routing issues return, set --accept-dns=false and configure
+  # Cloudflare nameservers + manual split DNS for tailscale0 instead.
+  services.resolved.enable = true;
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -127,7 +109,7 @@
       "--ssh"
       "--advertise-exit-node"
     ];
-    extraSetFlags = [ "--accept-dns=false" ];
+    extraSetFlags = [ "--accept-dns=true" ];
   };
 
   services.postgresql = {
@@ -139,61 +121,21 @@
     '';
   };
 
-  systemd.services = lib.mkMerge [
-    (lib.mapAttrs' (
-      name: cfg:
-      lib.nameValuePair "tailscaled-${name}" {
-        description = "Tailscale daemon for ${name} tailnet";
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
-        serviceConfig = {
-          ExecStart = "${pkgs.tailscale}/bin/tailscaled --tun=userspace-networking --state=/var/lib/tailscale-${name}/tailscaled.state --socket=/run/tailscale-${name}/tailscaled.sock --port=0 --socks5-server=localhost:${toString cfg.socks5Port}";
-          RuntimeDirectory = "tailscale-${name}";
-          StateDirectory = "tailscale-${name}";
-          Restart = "on-failure";
-        };
-        wantedBy = [ ]; # Don't auto-start
-      }
-    ) secondaryTailnets)
-
-    # Re-apply MagicDNS split DNS on tailscale0 whenever Tailscale resets it
-    {
-      tailscale-dns-split = {
-        description = "Maintain MagicDNS split DNS on tailscale0";
-        after = [ "tailscaled.service" ];
-        requires = [ "tailscaled.service" ];
-        wantedBy = [ "multi-user.target" ];
-        path = with pkgs; [
-          iproute2
-          systemd
-          gnugrep
-        ];
-        serviceConfig = {
-          Type = "simple";
-          Restart = "always";
-          RestartSec = 5;
-        };
-        script = ''
-          apply_dns() {
-            if ip link show tailscale0 &>/dev/null; then
-              resolvectl dns tailscale0 100.100.100.100
-              resolvectl domain tailscale0 "~ts.net"
-              resolvectl default-route tailscale0 false
-              resolvectl dnsovertls tailscale0 false
-            fi
-          }
-
-          sleep 3
-          apply_dns
-
-          journalctl -u tailscaled -f -n0 --grep="dns" | while read -r line; do
-            sleep 1
-            apply_dns
-          done
-        '';
+  systemd.services = lib.mapAttrs' (
+    name: cfg:
+    lib.nameValuePair "tailscaled-${name}" {
+      description = "Tailscale daemon for ${name} tailnet";
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.tailscale}/bin/tailscaled --tun=userspace-networking --state=/var/lib/tailscale-${name}/tailscaled.state --socket=/run/tailscale-${name}/tailscaled.sock --port=0 --socks5-server=localhost:${toString cfg.socks5Port}";
+        RuntimeDirectory = "tailscale-${name}";
+        StateDirectory = "tailscale-${name}";
+        Restart = "on-failure";
       };
+      wantedBy = [ ]; # Don't auto-start
     }
-  ];
+  ) secondaryTailnets;
 
   zramSwap = {
     enable = true;
@@ -225,7 +167,7 @@
     description = "Brandon Beveridge";
     extraGroups = [
       "libvirtd"
-      "networkmanager"
+      "network"
       "wheel"
     ];
     packages = with pkgs; [
@@ -267,6 +209,7 @@
     cachix
 
     dmidecode
+    impala
     exfatprogs
     fastfetch
     mesa-demos

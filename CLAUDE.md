@@ -68,7 +68,7 @@ This is a NixOS flake configuration managing personal desktop machines. Server i
    - Claude Code and Opencode config
 
 5. **home-manager/desktop.nix** - Desktop-only home-manager config:
-   - Fonts, GUI apps (keepassxc, feishin, cider-2)
+   - Fonts, GUI apps (feishin, cider-2)
    - Syncthing, beets, IBKR packages
    - Secondary tailnet wrapper scripts
 

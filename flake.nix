@@ -21,6 +21,8 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -38,6 +40,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
+        home-manager.backupFileExtension = "hm-backup";
         home-manager.extraSpecialArgs = { inherit inputs self secondaryTailnets; };
         home-manager.users.brandon = import ./home-manager/home.nix;
       };
@@ -76,6 +79,7 @@
             ibkr-desktop
             ibkr-desktop-install
             ;
+          opencode-claude-auth-sync = import ./packages/opencode-claude-auth-sync.nix { inherit pkgs; };
         };
 
       nixosConfigurations = {

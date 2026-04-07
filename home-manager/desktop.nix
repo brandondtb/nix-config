@@ -29,7 +29,6 @@ lib.mkIf pkgs.stdenv.isLinux {
       # GUI apps
       cider-2
       feishin
-      keepassxc
 
       # IBKR
       self.packages.${pkgs.system}.tws
@@ -43,6 +42,8 @@ lib.mkIf pkgs.stdenv.isLinux {
 
   services.syncthing = {
     enable = true;
+    overrideDevices = false;
+    overrideFolders = false;
     settings.options = {
       globalAnnounceEnabled = false;
       localAnnounceEnabled = false;
@@ -51,6 +52,16 @@ lib.mkIf pkgs.stdenv.isLinux {
     };
     settings.folders."Sync" = {
       path = "~/Sync";
+      versioning = {
+        type = "staggered";
+        params = {
+          cleanInterval = "3600";
+          maxAge = "2592000"; # 30 days
+        };
+      };
+    };
+    settings.folders."Obsidian" = {
+      path = "~/Obsidian";
       versioning = {
         type = "staggered";
         params = {

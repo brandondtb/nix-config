@@ -30,7 +30,7 @@
     whois
 
     # Databases
-    # pgcli  # TODO: Uncomment when no longer broken
+    pgcli
     sqlite
 
     # Cloud & infrastructure
@@ -40,6 +40,7 @@
     google-cloud-sql-proxy
     kubectl
     kubernetes-helm
+    opentofu
     terraform
     terraform-lsp
 
@@ -48,16 +49,17 @@
 
     # CLI tools & services
     _1password-cli
-    aider-chat
     auth0-cli
     gemini-cli
     gh
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi
     opencode
+    self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-claude-auth-sync
     stripe-cli
 
     # Node
     nodejs
-    nodePackages.prettier
+    prettier
     mermaid-cli
 
     # Python
@@ -138,7 +140,7 @@
     enable = true;
     package = pkgs.claude-code;
 
-    memory.source = ../claude/CLAUDE.md;
+    memory.source = ../opencode/AGENTS.md;
 
     mcpServers = {
       linear-rad = {
@@ -149,13 +151,9 @@
         type = "sse";
         url = "https://mcp.linear.app/sse";
       };
-      todoist = {
+      datadog-vody = {
         type = "http";
-        url = "https://ai.todoist.net/mcp";
-      };
-      atlassian = {
-        type = "http";
-        url = "https://mcp.atlassian.com/v1/mcp";
+        url = "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
       };
       vanta-vody = {
         command = "node";
@@ -197,6 +195,7 @@
           "mcp__vanta-vody__get_*"
           "mcp__vanta-vody__list_*"
           "mcp__vanta-vody__search_*"
+          "mcp__datadog-vody__*"
           "WebSearch"
           "WebFetch"
         ];
@@ -207,6 +206,7 @@
   # Opencode - global config at ~/.config/opencode/opencode.json
   xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
     "$schema" = "https://opencode.ai/config.json";
+    model = "anthropic/claude-opus-4-6";
     autoupdate = false;
     share = "manual";
     permission = {
@@ -238,17 +238,21 @@
       linear-rad = {
         type = "remote";
         url = "https://mcp.linear.app/sse";
+        enabled = true;
       };
       linear-vody = {
         type = "remote";
         url = "https://mcp.linear.app/sse";
+        enabled = true;
       };
-      todoist = {
+      datadog-vody = {
         type = "remote";
-        url = "https://ai.todoist.net/mcp";
+        url = "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
+        enabled = true;
       };
       vanta-vody = {
         type = "local";
+        enabled = true;
         command = [
           "node"
           "/home/brandon/src/vody/vanta-mcp-server/build/index.js"
@@ -324,7 +328,7 @@
       {
         plugin = resurrect;
         extraConfig = ''
-          set -g @resurrect-processes 'claude "~pnpm dev"'
+          set -g @resurrect-processes 'claude opencode "~nvim" "~pnpm dev"'
         '';
       }
       {
@@ -337,6 +341,9 @@
     ];
 
     extraConfig = ''
+      set -s extended-keys on
+      set -as terminal-features '*:kitkeys'
+
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
 

@@ -100,6 +100,17 @@
     ${pkgs.xset}/bin/xset s 60
   '';
 
+  # Ignore the AMD Phoenix1 iGPU in Xorg to prevent glamor_init crash
+  # when modesetting tries to hotplug it as a secondary GPU (Xorg 21.1.x bug)
+  services.xserver.extraConfig = ''
+    Section "Device"
+      Identifier "IgnoreAMDiGPU"
+      Driver     "modesetting"
+      BusID      "PCI:21:0:0"
+      Option     "Ignore" "true"
+    EndSection
+  '';
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
