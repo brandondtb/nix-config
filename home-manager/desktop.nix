@@ -28,7 +28,10 @@ lib.mkIf pkgs.stdenv.isLinux {
 
       # GUI apps
       cider-2
+      dbeaver-bin
       feishin
+      kdePackages.kdenlive
+      zed-editor.fhs
 
       # IBKR
       self.packages.${pkgs.system}.tws
