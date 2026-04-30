@@ -54,6 +54,7 @@
     gh
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi
     opencode
+    self.packages.${pkgs.stdenv.hostPlatform.system}.lean-coding-agent
     self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-claude-auth-sync
     stripe-cli
 
@@ -81,13 +82,13 @@
     md2pdf
 
     # General utilities
-    elinks
     gcc
     gtypist
     jless
     jq
     just
     nh
+    btop-cuda
     ripgrep
     pwgen
     sops
@@ -140,7 +141,7 @@
     enable = true;
     package = pkgs.claude-code;
 
-    memory.source = ../opencode/AGENTS.md;
+    context = ../opencode/AGENTS.md;
 
     mcpServers = {
       linear-rad = {
@@ -381,6 +382,8 @@
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
+    withRuby = false;
+    withPython3 = false;
 
     plugins = [
       { plugin = pkgs.vimPlugins.tokyonight-nvim; }

@@ -29,15 +29,16 @@ lib.mkIf pkgs.stdenv.isLinux {
       # GUI apps
       cider-2
       dbeaver-bin
+      easyeffects
       feishin
       kdePackages.kdenlive
       zed-editor.fhs
 
       # IBKR
-      self.packages.${pkgs.system}.tws
-      self.packages.${pkgs.system}.tws-install
-      self.packages.${pkgs.system}.ibkr-desktop
-      self.packages.${pkgs.system}.ibkr-desktop-install
+      self.packages.${pkgs.stdenv.hostPlatform.system}.tws
+      self.packages.${pkgs.stdenv.hostPlatform.system}.tws-install
+      self.packages.${pkgs.stdenv.hostPlatform.system}.ibkr-desktop
+      self.packages.${pkgs.stdenv.hostPlatform.system}.ibkr-desktop-install
     ]
     ++ builtins.attrValues tailnetScripts;
 

@@ -207,6 +207,18 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # Workaround: cli-helpers 2.10.0 tests fail with current Pygments (NixOS/nixpkgs#513102)
+  nixpkgs.overlays = [
+    (final: prev: {
+      python3 = prev.python3.override {
+        packageOverrides = pyFinal: pyPrev: {
+          cli-helpers = pyPrev.cli-helpers.overridePythonAttrs { doCheck = false; };
+        };
+      };
+      python3Packages = final.python3.pkgs;
+    })
+  ];
+
   environment.systemPackages = with pkgs; [
     cachix
 
