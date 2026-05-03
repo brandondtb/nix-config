@@ -89,6 +89,7 @@
     just
     nh
     btop-cuda
+    openssl
     ripgrep
     pwgen
     sops
