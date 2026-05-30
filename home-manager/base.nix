@@ -110,6 +110,9 @@
     matchBlocks = {
       "*" = {
         addKeysToAgent = "yes";
+        controlMaster = "auto";
+        controlPath = "~/.ssh/sockets/%r@%h-%p";
+        controlPersist = "600";
       };
     }
     // builtins.mapAttrs (name: cfg: {
@@ -117,6 +120,10 @@
       proxyCommand = "${pkgs.libressl.nc}/bin/nc -X 5 -x localhost:${toString cfg.socks5Port} %h %p";
     }) secondaryTailnets;
   };
+
+  home.activation.sshSockets = config.lib.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.ssh/sockets
+  '';
 
   # Direnv
   programs.direnv = {

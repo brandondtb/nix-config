@@ -195,6 +195,7 @@
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     localNetworkGameTransfers.openFirewall = true;
+    extraPackages = [ pkgs.hidapi ];
   };
 
   programs.nix-ld.enable = true;
@@ -220,6 +221,14 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    (makeDesktopItem {
+      name = "steam-pipewire";
+      desktopName = "Steam (PipeWire)";
+      exec = "steam -pipewire %U";
+      icon = "steam";
+      categories = [ "Game" ];
+      mimeTypes = [ "x-scheme-handler/steam" ];
+    })
     cachix
 
     dmidecode
