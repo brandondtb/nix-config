@@ -36,7 +36,7 @@
     # Cloud & infrastructure
     awscli2
     ssm-session-manager-plugin
-    (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
+    google-cloud-sdk
     google-cloud-sql-proxy
     kubectl
     kubernetes-helm
