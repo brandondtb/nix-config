@@ -36,7 +36,7 @@
     # Cloud & infrastructure
     awscli2
     ssm-session-manager-plugin
-    google-cloud-sdk
+    (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
     google-cloud-sql-proxy
     kubectl
     kubernetes-helm
@@ -153,16 +153,20 @@
 
     mcpServers = {
       linear-rad = {
-        type = "sse";
-        url = "https://mcp.linear.app/sse";
+        type = "http";
+        url = "https://mcp.linear.app/mcp";
       };
       linear-vody = {
-        type = "sse";
-        url = "https://mcp.linear.app/sse";
+        type = "http";
+        url = "https://mcp.linear.app/mcp";
       };
       datadog-vody = {
         type = "http";
         url = "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
+      };
+      glitchtip-rad = {
+        type = "http";
+        url = "https://app.glitchtip.com/mcp";
       };
       vanta-vody = {
         command = "node";
@@ -205,6 +209,7 @@
           "mcp__vanta-vody__list_*"
           "mcp__vanta-vody__search_*"
           "mcp__datadog-vody__*"
+          "mcp__glitchtip-rad__*"
           "WebSearch"
           "WebFetch"
         ];
@@ -246,17 +251,22 @@
     mcp = {
       linear-rad = {
         type = "remote";
-        url = "https://mcp.linear.app/sse";
+        url = "https://mcp.linear.app/mcp";
         enabled = true;
       };
       linear-vody = {
         type = "remote";
-        url = "https://mcp.linear.app/sse";
+        url = "https://mcp.linear.app/mcp";
         enabled = true;
       };
       datadog-vody = {
         type = "remote";
         url = "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
+        enabled = true;
+      };
+      glitchtip-rad = {
+        type = "remote";
+        url = "https://app.glitchtip.com/mcp";
         enabled = true;
       };
       vanta-vody = {
