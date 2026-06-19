@@ -157,7 +157,6 @@
     "com.google.Chrome"
     "com.slack.Slack"
     "md.obsidian.Obsidian"
-    "org.telegram.desktop"
     "com.calibre_ebook.calibre"
     "us.zoom.Zoom"
   ];

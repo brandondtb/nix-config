@@ -6,7 +6,7 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
-    lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
+    lanzaboote.url = "github:nix-community/lanzaboote";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
     home-manager = {

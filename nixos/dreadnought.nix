@@ -11,9 +11,6 @@
     cudaPackages.cudnn
   ];
 
-  # Pin to 6.18 until NVIDIA open driver supports 6.19
-  boot.kernelPackages = pkgs.lib.mkForce pkgs.linuxPackages_6_18;
-
   # Enable systemd in initrd for TPM2 unlock
   boot.initrd.systemd.enable = true;
 
