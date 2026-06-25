@@ -32,6 +32,8 @@ lib.mkIf pkgs.stdenv.isLinux {
       easyeffects
       feishin
       kdePackages.kdenlive
+      rimsort
+      steamcmd
       zed-editor.fhs
 
       # IBKR

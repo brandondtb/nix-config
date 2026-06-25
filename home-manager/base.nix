@@ -225,56 +225,27 @@
     share = "manual";
     permission = {
       bash = {
-        "*" = "ask";
-        "git *" = "allow";
-        "gh *" = "allow";
-        "nix *" = "allow";
-        "nh *" = "allow";
-        "nixos-rebuild *" = "allow";
-        "nixfmt *" = "allow";
-        "pnpm *" = "allow";
-        "uv *" = "allow";
-        "ruff *" = "allow";
-        "biome *" = "allow";
-        "pytest *" = "allow";
-        "vitest *" = "allow";
-        "cat *" = "allow";
-        "ls" = "allow";
-        "ls *" = "allow";
-        "rg *" = "allow";
-        "fd *" = "allow";
-        "find *" = "allow";
-        "head *" = "allow";
-        "tail *" = "allow";
-        "wc *" = "allow";
-        "jq *" = "allow";
-        "mkdir *" = "allow";
-        "cp *" = "allow";
-        "mv *" = "allow";
-        "ln *" = "allow";
-        "tar *" = "allow";
-        "chmod *" = "allow";
-        "touch *" = "allow";
-        "file *" = "allow";
-        "which *" = "allow";
-        "stat *" = "allow";
-        "du *" = "allow";
-        "df *" = "allow";
-        "tree *" = "allow";
-        "ssh *" = "allow";
-        "scp *" = "allow";
-        "curl *" = "allow";
-        "tailscale *" = "allow";
-        "docker *" = "allow";
-        "docker-compose *" = "allow";
-        "terraform *" = "allow";
-        "kubectl *" = "allow";
-        "helm *" = "allow";
-        "aws *" = "allow";
-        "gcloud *" = "allow";
-        "systemctl status *" = "allow";
-        "systemctl list-*" = "allow";
-        "journalctl *" = "allow";
+        # Default: allow everything. Last matching rule wins, so the
+        # catch-all must stay first; put denies/asks below.
+        "*" = "allow";
+
+        # Privilege escalation -- sometimes needed, always worth a prompt.
+        "sudo *" = "ask";
+
+        # Catastrophic system operations.
+        "rm -rf /*" = "deny";
+        "rm -fr /*" = "deny";
+        "rm -rf /" = "deny";
+        "rm -fr /" = "deny";
+        "mkfs*" = "deny";
+        "shutdown*" = "deny";
+        "reboot*" = "deny";
+        "dd *" = "ask";
+
+        # Git history destruction.
+        "git push --force*" = "ask";
+        "git push -f*" = "ask";
+        "git reset --hard*" = "ask";
       };
       external_directory = {
         "~/**" = "allow";

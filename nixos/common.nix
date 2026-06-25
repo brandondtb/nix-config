@@ -243,6 +243,7 @@
     vim
     unzip
     wl-clipboard
+    xclip
 
     podman-compose
   ];
