@@ -121,7 +121,7 @@
     }) secondaryTailnets;
   };
 
-  home.activation.sshSockets = config.lib.dag.entryAfter ["writeBoundary"] ''
+  home.activation.sshSockets = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.ssh/sockets
   '';
 
@@ -225,14 +225,132 @@
     share = "manual";
     permission = {
       bash = {
-        # Default: allow everything. Last matching rule wins, so the
-        # catch-all must stay first; put denies/asks below.
-        "*" = "allow";
+        # Default: PROMPT for any command not explicitly allow-listed.
+        # Last matching rule wins, so ordering is load-bearing:
+        #   1. catch-all "ask"  (broadest, must be first)
+        #   2. read-only allows  (safe inspection, for ergonomics)
+        #   3. explicit asks/denies  (most-specific, must be last)
+        "*" = "ask";
 
-        # Privilege escalation -- sometimes needed, always worth a prompt.
+        # --- Read-only shell inspection (safe: cannot exec or write) ---
+        "ls" = "allow";
+        "ls *" = "allow";
+        "ll" = "allow";
+        "ll *" = "allow";
+        "la" = "allow";
+        "la *" = "allow";
+        "cat *" = "allow";
+        "head *" = "allow";
+        "tail *" = "allow";
+        "less *" = "allow";
+        "wc *" = "allow";
+        "pwd" = "allow";
+        "whoami" = "allow";
+        "hostname" = "allow";
+        "uname" = "allow";
+        "uname *" = "allow";
+        "date" = "allow";
+        "uptime" = "allow";
+        "which *" = "allow";
+        "whereis *" = "allow";
+        "type *" = "allow";
+        "file *" = "allow";
+        "stat *" = "allow";
+        "du" = "allow";
+        "du *" = "allow";
+        "df" = "allow";
+        "df *" = "allow";
+        "free" = "allow";
+        "free *" = "allow";
+        "tree" = "allow";
+        "tree *" = "allow";
+        "rg *" = "allow";
+        "grep *" = "allow";
+        "printenv" = "allow";
+        "printenv *" = "allow";
+        "env" = "allow";
+        "test" = "allow";
+        "test *" = "allow";
+
+        # Deliberately NOT allowed (exec/write vectors): find/fd/xargs
+        # (-exec), env <args> (runs commands), echo/printf/tee (redirect
+        # writes), sed/awk (-i), and all cp/mv/ln/rm/mkdir/touch/chmod.
+        # These prompt via the catch-all -- which is the point.
+
+        # --- Read-only git (mutations like commit/push/reset/branch -D
+        # are not listed, so they prompt) ---
+        "git status" = "allow";
+        "git status *" = "allow";
+        "git diff" = "allow";
+        "git diff *" = "allow";
+        "git log" = "allow";
+        "git log *" = "allow";
+        "git show" = "allow";
+        "git show *" = "allow";
+        "git rev-parse *" = "allow";
+        "git ls-files *" = "allow";
+        "git symbolic-ref *" = "allow";
+        "git branch" = "allow";
+        "git branch --show-current" = "allow";
+        "git remote" = "allow";
+        "git remote -v" = "allow";
+        "git config --get *" = "allow";
+        "git blame *" = "allow";
+        "git stash list" = "allow";
+
+        # --- Read-only nix (builds/installs/profile/switch prompt) ---
+        "nix --version" = "allow";
+        "nix flake show" = "allow";
+        "nix flake show *" = "allow";
+        "nix flake check" = "allow";
+        "nix flake check *" = "allow";
+        "nix flake metadata" = "allow";
+        "nix flake metadata *" = "allow";
+        "nix flake archive --dry-run *" = "allow";
+        "nix path-info" = "allow";
+        "nix path-info *" = "allow";
+        "nix profile list" = "allow";
+        "nix-store --query *" = "allow";
+        "nix-store -q *" = "allow";
+        "nix eval" = "allow";
+        "nix eval *" = "allow";
+        "nix build --dry-run *" = "allow";
+
+        # --- Read-only system/network inspection ---
+        "systemctl status *" = "allow";
+        "systemctl list-*" = "allow";
+        "systemctl is-*" = "allow";
+        "journalctl *" = "allow";
+        "ps" = "allow";
+        "ps *" = "allow";
+        "pgrep" = "allow";
+        "pgrep *" = "allow";
+        "lsof *" = "allow";
+        "ss" = "allow";
+        "ss *" = "allow";
+        "ip addr" = "allow";
+        "ip addr *" = "allow";
+        "ip route" = "allow";
+        "ip route *" = "allow";
+        "ip link" = "allow";
+        "ip link *" = "allow";
+        "tailscale status" = "allow";
+        "tailscale status *" = "allow";
+        "tailscale ip" = "allow";
+        "tailscale ip *" = "allow";
+        "tailscale netcheck" = "allow";
+
+        # --- Explicit asks (redundant with the catch-all, but kept so the
+        # intent survives if someone later broadens an allow rule) ---
         "sudo *" = "ask";
+        "dd *" = "ask";
 
-        # Catastrophic system operations.
+        # Git history destruction.
+        "git push --force*" = "ask";
+        "git push -f*" = "ask";
+        "git reset --hard*" = "ask";
+
+        # --- Catastrophic system operations (deny, most-specific, LAST) ---
         "rm -rf /*" = "deny";
         "rm -fr /*" = "deny";
         "rm -rf /" = "deny";
@@ -240,12 +358,6 @@
         "mkfs*" = "deny";
         "shutdown*" = "deny";
         "reboot*" = "deny";
-        "dd *" = "ask";
-
-        # Git history destruction.
-        "git push --force*" = "ask";
-        "git push -f*" = "ask";
-        "git reset --hard*" = "ask";
       };
       external_directory = {
         "~/**" = "allow";

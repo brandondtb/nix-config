@@ -152,7 +152,6 @@
 
   services.flatpak.enable = true;
   services.flatpak.packages = [
-    "app.zen_browser.zen"
     "com.discordapp.Discord"
     "com.google.Chrome"
     "com.slack.Slack"
@@ -205,7 +204,14 @@
     polkitPolicyOwners = [ "brandon" ];
   };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    # pnpm-10.29.2 is a build-time dep of feishin (nativeBuildInputs), flagged
+    # insecure in current nixpkgs (CVE-2026-48995/50014-17/50573/55699). Safe to
+    # allow: pnpm only runs in feishin's build sandbox -- it never enters the
+    # runtime closure or this system. Drop this entry on the next nixpkgs bump.
+    permittedInsecurePackages = [ "pnpm-10.29.2" ];
+  };
 
   # Workaround: cli-helpers 2.10.0 tests fail with current Pygments (NixOS/nixpkgs#513102)
   nixpkgs.overlays = [

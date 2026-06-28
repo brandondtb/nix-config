@@ -31,10 +31,12 @@ lib.mkIf pkgs.stdenv.isLinux {
       dbeaver-bin
       easyeffects
       feishin
+      gimp
+      imagemagick
       kdePackages.kdenlive
+      krita
       rimsort
       steamcmd
-      zed-editor.fhs
 
       # IBKR
       self.packages.${pkgs.stdenv.hostPlatform.system}.tws
