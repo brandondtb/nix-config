@@ -43,7 +43,7 @@ This is a NixOS flake configuration managing personal desktop machines. Server i
 ### System Configurations
 - **dreadnought** - x86_64 NixOS desktop with NVIDIA GPU
 - **relm** - x86_64 NixOS
-- **ultros** - x86_64 NixOS laptop (ThinkPad X1 2-in-1 Gen 10, Intel Arrow Lake-U)
+- **ultros** - x86_64 NixOS laptop (ThinkPad X1 2-in-1 Gen 11, Intel Core Ultra 7 355 / Panther Lake)
 
 ### Key Components
 1. **flake.nix** - Main entry point defining:

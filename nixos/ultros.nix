@@ -14,11 +14,11 @@
   boot.initrd.systemd.enable = true;
 
   # Resume from encrypted swap for hibernate
-  boot.resumeDevice = "/dev/mapper/luks-33a2c874-f370-46ab-a252-5dca64198209";
+  boot.resumeDevice = "/dev/mapper/luks-b352d890-9c18-4971-a03a-b24774f928aa";
 
   hardware.enableAllFirmware = true;
 
-  # Intel Arc / Xe integrated graphics (Arrow Lake-U)
+  # Intel Arc / Xe integrated graphics (Panther Lake)
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
