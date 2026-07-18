@@ -80,6 +80,7 @@
 
     # Document conversion
     md2pdf
+    typst
 
     # General utilities
     gcc

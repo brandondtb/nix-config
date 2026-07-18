@@ -35,6 +35,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       imagemagick
       kdePackages.kdenlive
       krita
+      librepods
       rimsort
       steamcmd
 

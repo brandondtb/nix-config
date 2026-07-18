@@ -48,7 +48,7 @@ vim.keymap.set("n", "<leader>sf", builtin.find_files, {})
 vim.keymap.set("n", "<leader>sg", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>sb", builtin.buffers, {})
 vim.keymap.set("n", "<leader>sh", builtin.help_tags, {})
-vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 
 -- Plugin configuration
 local cmp = require("cmp")
@@ -94,8 +94,6 @@ cmp.setup({
 		{ name = "copilot" },
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
-		{ name = "obsidian" },
-		{ name = "obsidian_new" },
 	}, {
 		{ name = "buffer" },
 	}),
@@ -151,9 +149,6 @@ require("obsidian").setup({
 		folder = "daily",
 		date_format = "%Y-%m-%d",
 	},
-	completion = {
-		nvim_cmp = true,
-	},
 	note_id_func = function(title)
 		if title ~= nil then
 			return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
@@ -186,17 +181,25 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 -- Configure LSPs using new vim.lsp.config API (nvim 0.11+)
 vim.lsp.config.pyright = {
-	cmd = { 'pyright-langserver', '--stdio' },
-	filetypes = { 'python' },
-	root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git' },
+	cmd = { "pyright-langserver", "--stdio" },
+	filetypes = { "python" },
+	root_markers = {
+		"pyproject.toml",
+		"setup.py",
+		"setup.cfg",
+		"requirements.txt",
+		"Pipfile",
+		"pyrightconfig.json",
+		".git",
+	},
 	capabilities = capabilities,
 }
 
-vim.lsp.enable('pyright')
+vim.lsp.enable("pyright")
 
 -- Claude Code integration
 require("claudecode").setup({
