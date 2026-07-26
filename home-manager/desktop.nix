@@ -36,7 +36,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       kdePackages.kdenlive
       krita
       librepods
-      rimsort
+      # rimsort  # broken: steamworkspy fails pythonImportsCheck on python3.14 (nixpkgs PR #528328)
       steamcmd
 
       # IBKR

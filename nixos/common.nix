@@ -158,6 +158,7 @@
     "md.obsidian.Obsidian"
     "com.calibre_ebook.calibre"
     "us.zoom.Zoom"
+    "org.signal.Signal"
   ];
 
   users.users.brandon = {
