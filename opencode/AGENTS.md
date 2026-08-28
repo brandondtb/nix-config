@@ -15,11 +15,6 @@
 - When an approach fails, understand *why* before trying alternatives; don't abandon correct solutions for hacky workarounds
 - Before running more than 3–4 commands to debug or fix something, stop and search the web for the root cause or a better approach; avoid long command sequences without a clear solution in sight
 - Prefer web searches over internal knowledge for current APIs, libraries, and tools
-- Check ~/Obsidian/radiation for relevant notes, project context, and knowledge before starting tasks
-- Write useful outputs (summaries, research findings, architecture decisions, meeting notes) to ~/Obsidian/radiation as markdown files when appropriate
-  - Use YAML frontmatter for tags and metadata
-  - Use [[wiki-links]] to connect related notes
-  - Place daily/ephemeral notes in ~/Obsidian/radiation/daily/
 
 ## Python
 - Prefer pytest for testing

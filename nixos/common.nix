@@ -114,6 +114,8 @@
 
   services.postgresql = {
     enable = true;
+    package = pkgs.postgresql_17;
+    extensions = [ pkgs.postgresql_17.pkgs.pgvector ];
     authentication = lib.mkOverride 10 ''
       local all all trust
       host all all 127.0.0.1/32 trust
@@ -155,7 +157,6 @@
     "com.discordapp.Discord"
     "com.google.Chrome"
     "com.slack.Slack"
-    "md.obsidian.Obsidian"
     "com.calibre_ebook.calibre"
     "us.zoom.Zoom"
     "org.signal.Signal"

@@ -69,16 +69,6 @@ lib.mkIf pkgs.stdenv.isLinux {
         };
       };
     };
-    settings.folders."Obsidian" = {
-      path = "~/Obsidian";
-      versioning = {
-        type = "staggered";
-        params = {
-          cleanInterval = "3600";
-          maxAge = "2592000"; # 30 days
-        };
-      };
-    };
   };
 
   programs.beets = {

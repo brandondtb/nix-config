@@ -136,37 +136,6 @@ require("telescope").setup({
 
 require("telescope").load_extension("ui-select")
 
--- Obsidian
-require("obsidian").setup({
-	legacy_commands = false,
-	workspaces = {
-		{
-			name = "obsidian",
-			path = "~/Obsidian",
-		},
-	},
-	daily_notes = {
-		folder = "daily",
-		date_format = "%Y-%m-%d",
-	},
-	note_id_func = function(title)
-		if title ~= nil then
-			return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
-		end
-		return tostring(os.time())
-	end,
-	picker = {
-		name = "telescope.nvim",
-	},
-})
-
-vim.keymap.set("n", "<leader>oo", "<cmd>Obsidian quick-switch<cr>", { desc = "Open/switch note" })
-vim.keymap.set("n", "<leader>on", "<cmd>Obsidian new<cr>", { desc = "New note" })
-vim.keymap.set("n", "<leader>od", "<cmd>Obsidian today<cr>", { desc = "Today's daily note" })
-vim.keymap.set("n", "<leader>os", "<cmd>Obsidian search<cr>", { desc = "Search notes" })
-vim.keymap.set("n", "<leader>ob", "<cmd>Obsidian backlinks<cr>", { desc = "Show backlinks" })
-vim.keymap.set("n", "<leader>ot", "<cmd>Obsidian tags<cr>", { desc = "Search tags" })
-
 -- Tree-sitter: Grammars installed via Nix (withPlugins)
 -- Highlighting enabled by default in Neovim 0.10+
 -- Disable treesitter highlighting for large files

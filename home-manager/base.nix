@@ -413,6 +413,17 @@
 
     defaultKeymap = "emacs";
 
+    # Home-manager's ssh-agent integration exports
+    # SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent" (order 900). When XDG_RUNTIME_DIR
+    # is unset (e.g. Tailscale SSH sessions bypass pam_systemd), that expands to
+    # "/ssh-agent", a dead path that poisons tmux's environment. Drop dead sockets
+    # so ssh falls back to prompting rather than failing agent lookups forever.
+    envExtra = lib.mkOrder 901 ''
+      if [ -n "''${SSH_AUTH_SOCK:-}" ] && [ ! -S "$SSH_AUTH_SOCK" ]; then
+        unset SSH_AUTH_SOCK
+      fi
+    '';
+
     zplug = {
       enable = true;
 
@@ -526,8 +537,6 @@
       { plugin = pkgs.vimPlugins.nvim-web-devicons; }
       { plugin = pkgs.vimPlugins.nui-nvim; }
       { plugin = pkgs.vimPlugins.neo-tree-nvim; }
-
-      { plugin = pkgs.vimPlugins.obsidian-nvim; }
 
       { plugin = pkgs.vimPlugins.nvim-lspconfig; } # LSP Configs https://github.com/neovim/nvim-lspconfig
       { plugin = pkgs.vimPlugins.lspkind-nvim; } # Pictograms for LSP

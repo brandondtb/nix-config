@@ -120,9 +120,31 @@ in
     name = "ibkr-desktop";
     inherit targetPkgs;
     runScript = pkgs.writeShellScript "ibkr-desktop-launcher" ''
-      export _JAVA_OPTIONS="''${_JAVA_OPTIONS:-} -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true"
-      export QTWEBENGINE_DISABLE_SANDBOX=1
+      # IBKR Desktop is Qt (QtJambi 6.8 + QtWebEngine), not Swing, and it ships
+      # its own Qt. The KDE session exports plugin/QML paths for the system Qt
+      # (6.11), which the bundled Qt rejects at load time -- drop them so it
+      # only ever looks at its own.
+      unset QT_PLUGIN_PATH QML2_IMPORT_PATH QML_IMPORT_PATH
+      unset QT_QPA_PLATFORMTHEME QT_STYLE_OVERRIDE
+
+      # No wayland platform plugin is bundled, so go straight to xcb rather
+      # than probing wayland first and failing.
       unset WAYLAND_DISPLAY
+      export QT_QPA_PLATFORM=xcb
+
+      # libglvnd inside the FHS env only sees mesa's EGL ICD (the host driver's
+      # lives under /run/opengl-driver/share, which glvnd does not scan), so EGL
+      # silently falls back to llvmpipe -- software rendering on a 4090.
+      export __EGL_VENDOR_LIBRARY_DIRS=/run/opengl-driver/share/glvnd/egl_vendor.d:/usr/share/glvnd/egl_vendor.d
+
+      export QTWEBENGINE_DISABLE_SANDBOX=1
+
+      # The install4j launcher hardcodes -Dio.qt.debug=debug and
+      # -Dio.qt.log-messages=ALL, routing every Qt message through
+      # java.util.logging. _JAVA_OPTIONS is applied after the command line, so
+      # it wins.
+      export _JAVA_OPTIONS="''${_JAVA_OPTIONS:-} -Dio.qt.debug=false -Dio.qt.log-messages=CRITICAL,FATAL"
+
       NTWS_DIR="$HOME/ntws"
       if [ -x "$NTWS_DIR/ntws" ]; then
         exec "$NTWS_DIR/ntws" "$@"
