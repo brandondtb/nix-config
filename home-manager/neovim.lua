@@ -80,7 +80,6 @@ cmp.setup({
 			mode = "symbol", -- show only symbol annotations
 			maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
 			ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-			symbol_map = { Copilot = "" },
 
 			-- The function below will be called before any actual modifications from lspkind
 			-- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
@@ -91,7 +90,6 @@ cmp.setup({
 	},
 
 	sources = cmp.config.sources({
-		{ name = "copilot" },
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 	}, {
@@ -169,37 +167,3 @@ vim.lsp.config.pyright = {
 }
 
 vim.lsp.enable("pyright")
-
--- Claude Code integration
-require("claudecode").setup({
-	auto_start = true,
-	terminal = {
-		split_side = "right",
-		split_width_percentage = 0.30,
-		provider = "snacks",
-	},
-	diff_opts = {
-		auto_close_on_accept = true,
-		vertical_split = true,
-	},
-})
-
--- Claude Code keymaps (per official docs)
-vim.keymap.set("n", "<leader>a", "", { desc = "AI/Claude Code" })
-vim.keymap.set("n", "<leader>ac", "<cmd>ClaudeCode<cr>", { desc = "Toggle Claude" })
-vim.keymap.set("n", "<leader>af", "<cmd>ClaudeCodeFocus<cr>", { desc = "Focus Claude" })
-vim.keymap.set("n", "<leader>ar", "<cmd>ClaudeCode --resume<cr>", { desc = "Resume Claude" })
-vim.keymap.set("n", "<leader>aC", "<cmd>ClaudeCode --continue<cr>", { desc = "Continue Claude" })
-vim.keymap.set("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", { desc = "Select Claude model" })
-vim.keymap.set("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", { desc = "Add current buffer" })
-vim.keymap.set("v", "<leader>as", "<cmd>ClaudeCodeSend<cr>", { desc = "Send to Claude" })
-vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Accept diff" })
-vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Deny diff" })
-
--- File tree integration (neo-tree, netrw, etc.)
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "neo-tree", "netrw" },
-	callback = function()
-		vim.keymap.set("n", "<leader>as", "<cmd>ClaudeCodeTreeAdd<cr>", { buffer = true, desc = "Add file" })
-	end,
-})

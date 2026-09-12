@@ -79,7 +79,6 @@
             ibkr-desktop
             ibkr-desktop-install
             ;
-          opencode-claude-auth-sync = import ./packages/opencode-claude-auth-sync.nix { inherit pkgs; };
           lean-coding-agent = import ./packages/lean-coding-agent.nix { inherit pkgs; };
         };
 

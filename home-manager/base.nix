@@ -55,7 +55,6 @@
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi
     opencode
     self.packages.${pkgs.stdenv.hostPlatform.system}.lean-coding-agent
-    self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-claude-auth-sync
     stripe-cli
 
     # Node
@@ -143,78 +142,6 @@
         email = "brandon@radiation.io";
       };
       pull.rebase = true;
-    };
-  };
-
-  programs.claude-code = {
-    enable = true;
-    package = pkgs.claude-code;
-
-    context = ../opencode/AGENTS.md;
-
-    mcpServers = {
-      linear-rad = {
-        type = "http";
-        url = "https://mcp.linear.app/mcp";
-      };
-      linear-vody = {
-        type = "http";
-        url = "https://mcp.linear.app/mcp";
-      };
-      datadog-vody = {
-        type = "http";
-        url = "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
-      };
-      glitchtip-rad = {
-        type = "http";
-        url = "https://app.glitchtip.com/mcp";
-      };
-      vanta-vody = {
-        command = "node";
-        args = [ "/home/brandon/src/vody/vanta-mcp-server/build/index.js" ];
-        env = {
-          VANTA_ENV_FILE = "/home/brandon/src/vody/vanta-mcp-server/vanta-credentials.env";
-        };
-      };
-    };
-
-    settings = {
-      alwaysThinkingEnabled = true;
-      attribution = {
-        commit = "";
-        pr = "";
-      };
-      permissions = {
-        allow = [
-          "Bash(git:*)"
-          "Bash(gh:*)"
-          "Bash(pnpm:*)"
-          "Bash(uv:*)"
-          "Bash(ruff:*)"
-          "Bash(biome:*)"
-          "Bash(pytest:*)"
-          "Bash(vitest:*)"
-          "Bash(cat:*)"
-          "Bash(docker:*)"
-          "Bash(docker-compose:*)"
-          "Bash(terraform:*)"
-          "mcp__linear-rad__get_*"
-          "mcp__linear-rad__list_*"
-          "mcp__linear-rad__search_*"
-          "mcp__linear-rad__extract_*"
-          "mcp__linear-vody__get_*"
-          "mcp__linear-vody__list_*"
-          "mcp__linear-vody__search_*"
-          "mcp__linear-vody__extract_*"
-          "mcp__vanta-vody__get_*"
-          "mcp__vanta-vody__list_*"
-          "mcp__vanta-vody__search_*"
-          "mcp__datadog-vody__*"
-          "mcp__glitchtip-rad__*"
-          "WebSearch"
-          "WebFetch"
-        ];
-      };
     };
   };
 
@@ -474,7 +401,7 @@
       {
         plugin = resurrect;
         extraConfig = ''
-          set -g @resurrect-processes 'claude opencode "~nvim" "~pnpm dev"'
+          set -g @resurrect-processes 'opencode "~nvim" "~pnpm dev"'
         '';
       }
       {
@@ -545,8 +472,6 @@
 
       { plugin = pkgs.vimPlugins.which-key-nvim; }
 
-      { plugin = pkgs.vimPlugins.copilot-lua; }
-
       # cmp
       { plugin = pkgs.vimPlugins.cmp_luasnip; }
       { plugin = pkgs.vimPlugins.cmp-buffer; }
@@ -588,9 +513,7 @@
 
       { plugin = pkgs.vimPlugins.neoformat; } # Probably not needed
 
-      # Claude Code integration
       { plugin = pkgs.vimPlugins.snacks-nvim; }
-      { plugin = pkgs.vimPlugins.claudecode-nvim; }
     ];
 
     initLua = lib.fileContents ./neovim.lua;
