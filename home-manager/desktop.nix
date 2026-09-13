@@ -39,6 +39,8 @@ lib.mkIf pkgs.stdenv.isLinux {
       # rimsort  # broken: steamworkspy fails pythonImportsCheck on python3.14 (nixpkgs PR #528328)
       steamcmd
 
+      vlc
+
       # IBKR
       self.packages.${pkgs.stdenv.hostPlatform.system}.tws
       self.packages.${pkgs.stdenv.hostPlatform.system}.tws-install

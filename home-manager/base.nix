@@ -17,10 +17,12 @@
 
   home.packages = with pkgs; [
     # Network
+    cloudflared
     curl
     dnsutils
     iperf3
     libressl.nc
+    miniserve
     mosh
     mtr
     nmap
